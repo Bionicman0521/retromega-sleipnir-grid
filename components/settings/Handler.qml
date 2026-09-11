@@ -2,7 +2,7 @@ import QtQuick 2.15
 
 Item {
     property var keys: [
-        'listWrapAround', 'bgMusic', 'navSounds', 'darkMode', 'buttonsXBox', 'buttonsPlaystation',
+        'showDetail', 'alwaysListView','listWrapAround', 'bgMusic', 'navSounds', 'darkMode', 'buttonsXBox', 'buttonsPlaystation',
         'twelveHour','smallFont', 'gameListVideo', 'gameDetailsVideo', 'quietVideo',
         'quickVideo', 'dropShadow', 'resetNameFilter', 'attractTitle',
         'favoritesOnTop', 'delayedImage', 'showAllGames', 'showRecents', 'showFavorites',
@@ -70,6 +70,8 @@ Item {
         'showFavorites': true,
         'raUserName': '',
         'raApiKey': '',
+        'showDetail': true,
+        'alwaysListView': false,
     }
 
     property var values: {
@@ -95,6 +97,8 @@ Item {
         'showFavorites': null,
         'raUserName': null,
         'raApiKey': null,
+        'showDetail':null,
+        'alwaysListView':null,
     }
 
     property var callbacks: {
@@ -120,6 +124,8 @@ Item {
         'showFavorites': [],
         'raUserName': [],
         'raApiKey': [],
+        'showDetail':[],
+        'alwaysListView':[],
     }
 
     property var titles: {
@@ -145,6 +151,8 @@ Item {
         'showFavorites': 'Show Favorites Collection',
         'raUserName': 'RetroAchievements User Name',
         'raApiKey': 'RetroAchievements API Key',
+        'showDetail':'Show Logo/Screenshot on Grid View',
+        'alwaysListView':'Always List View',
     }
 
     property var notes: {

@@ -9,7 +9,7 @@ Rectangle {
 
     signal footerButtonClicked(string sigValue);
 
-    height: root.height * .115 * theme.fontScale;
+    height: root.height * .1 * theme.fontScale;
     color: theme.current.bgColor;
 
     anchors {

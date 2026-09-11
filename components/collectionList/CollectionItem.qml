@@ -15,60 +15,76 @@ Item {
     Image {
         source: '../../assets/images/stripe.png';
         fillMode: Image.PreserveAspectFit;
-        horizontalAlignment: Image.AlignRight;
+        horizontalAlignment: Image.AlignHCenter;
 
         anchors {
             fill: parent;
-            rightMargin: 70;
+            leftMargin: 70;
         }
     }
 
-    DropShadow {
-        source: title;
-        verticalOffset: 10;
-        color: '#30000000';
-        radius: 20;
-        samples: 41;
-        cached: true;
-        anchors.fill: title;
+
+    Image {
+        id: charecters;
+
+        source: '../../assets/images/charecters/' + collectionData.getImage(modelData.shortName) + '.png';
+        width: parent.width;
+        height: parent.height;
+        fillMode: Image.PreserveAspectFit;
+        horizontalAlignment: Image.AlignRight;
+        asynchronous: true;
+        smooth: true;
+        visible: true;
+
+        anchors {
+            right: parent.right;
+            bottom:parent.bottom;
+            top:parent.top;
+        }
     }
 
-    Text {
-        id: title;
-
-        text: modelData.name;
-        color: theme.current.titleColor;
-        width: root.width * .46;
-        wrapMode: Text.WordWrap;
-        lineHeight: 0.8;
-
-        font {
-            pixelSize: root.height * .075;
-            bold: true;
-        }
-
+    // new
+    Image {
+        id : consoleLogo
+        width: root.width * .4;
+        height: root.height * .3;
+        scale: selected ? 1.0 : 0.555;
+        z:1;
+        fillMode: Image.PreserveAspectFit;
         anchors {
             verticalCenter: parent.verticalCenter;
             left: parent.left;
-            leftMargin: 30;
-            verticalCenterOffset: -5;
+            leftMargin: 60;
         }
+        source: '../../assets/images/logos/' + collectionData.getImage(modelData.shortName) + '.png';
+    }
+
+    DropShadow {
+        source: consoleLogo;
+        horizontalOffset: 15;
+        verticalOffset: 15;
+        z:1;
+        color:theme.current.dropShadowColor;
+        radius: vpx(20);
+        samples: 41;
+        cached: true;
+        anchors.fill: consoleLogo;
     }
 
     Text {
-        text: filteredGamesCollection.count + ' games';
+        text: filteredGamesCollection.count + ' GAMES';
         color: theme.current.titleColor;
         opacity: 0.7;
 
         anchors {
             left: parent.left;
-            leftMargin: 30;
-            top: title.bottom;
+            leftMargin: 60;
+            top: consoleLogo.bottom;
             topMargin: root.height * .02;
         }
 
         font {
-            pixelSize: root.height * .03;
+            pixelSize: root.height * .025;
             letterSpacing: -0.3;
             bold: true;
         }
@@ -86,6 +102,7 @@ Item {
     }
 
     Text {
+        id: venderyear;
         text: collectionData.getVendorYear(modelData.shortName);
         color: theme.current.titleColor;
         opacity: 0.7;
@@ -99,38 +116,20 @@ Item {
 
         anchors {
             left: parent.left;
-            leftMargin: 30;
-            bottom: title.top;
+            leftMargin: 60;
+            bottom: consoleLogo.top;
+            bottomMargin: root.height * .02;
         }
     }
 
-    Image {
-        id: device;
-
-        source: '../../assets/images/devices/' + collectionData.getImage(modelData.shortName) + '.png';
-        width: root.width * .50;
-        height: root.height * .65;
-        fillMode: Image.PreserveAspectFit;
-        horizontalAlignment: Image.AlignHCenter;
-        asynchronous: true;
-        smooth: true;
-        visible: true;
-
-        anchors {
-            verticalCenter: parent.verticalCenter;
-            verticalCenterOffset: 10;
-            right: parent.right;
-            rightMargin: root.width * .02;
-        }
+    DropShadow {
+        source: charecters;
+        horizontalOffset: 15;
+        verticalOffset: 15;
+        color:theme.current.dropShadowColor;
+        radius: vpx(20);
+        samples: 41;
+        cached: true;
+        anchors.fill: charecters;
     }
-
-    // DropShadow {
-    //     source: device;
-    //     verticalOffset: 10;
-    //     color: '#30000000';
-    //     radius: 20;
-    //     samples: 41;
-    //     cached: true;
-    //     anchors.fill: device;
-    // }
 }

@@ -6,6 +6,7 @@ Item {
     property var valueButtonsXBox: false;
     property var valueButtonsPlaystation: false;
     property double fontScale: 1.0;
+    property double gridViewScale: 0.6;
 
     function setFontScale(smallFont) {
         if (smallFont) {
@@ -45,11 +46,20 @@ Item {
         setButtonGuide();
     }
 
+    function setGridViewScale(value){
+        if(value){
+            gridViewScale = 0.6;
+        }else{
+            gridViewScale = 1;
+        }
+    }
+
     Component.onCompleted: {
         settings.addCallback('darkMode', setDarkMode);
         settings.addCallback('buttonsXBox', setButtonGuideXBox);
         settings.addCallback('buttonsPlaystation', setButtonGuidePlaystation);
         settings.addCallback('smallFont', setFontScale);
+        settings.addCallback('showDetail', setGridViewScale);
     }
 
     LightTheme { id: lightTheme; }

@@ -1,15 +1,20 @@
 import QtQuick 2.15
+import QtGraphicalEffects 1.12
 
 import '../media' as Media
 
 Item {
+
+    // signal imageLoaded(int imgWidth, int imgHeight)
+
     property alias video: gameListVideo;
+    property alias gamesGridView: gamesGridView;
     property alias gamesListView: gamesListView;
     property var sortingFont: global.fonts.sans;
     property alias letter: skipLetter.letter;
 
     property double itemHeight: {
-        return gamesListView.height * .12 * theme.fontScale;
+        return gamesListView.height * .1 * theme.fontScale;
     }
 
     property string imgBoxFront: {
@@ -20,6 +25,11 @@ Item {
     property string imgScreenshot: {
         if (currentGame === null) return '';
         return currentGame.assets.screenshot;
+    }
+
+    property string imgLogo: {
+        if (currentGame === null) return '';
+        return currentGame.assets.logo;
     }
 
     property var ratingText: {
@@ -38,7 +48,6 @@ Item {
                 stars.push(glyphs.fullStar);
             }
         }
-
         return stars.join(' ');
     }
 
@@ -113,14 +122,18 @@ Item {
         if (nameFilter != '') {
             return 'No Games With "' + nameFilter + '"';
         }
-
         return 'No Games';
     }
 
-    Component.onCompleted: {
-        gamesListView.currentIndex = currentGameIndex;
-        gamesListView.positionViewAtIndex(currentGameIndex, ListView.Center);
+    function alwaysListView() {
+        return currentShortName=='allgames' || currentShortName=='favorites' || settings.get('alwaysListView');
+    }
 
+    Component.onCompleted: {
+        gamesGridView.currentIndex = currentGameIndex;
+        gamesGridView.positionViewAtIndex(currentGameIndex, ListView.Center);
+        
+        theme.setGridViewScale(settings.get('showDetail'));
         settings.addCallback('gameListVideo', function () {
             gameListVideo.switchVideo();
         });
@@ -142,10 +155,11 @@ Item {
 
     ListView {
         id: gamesListView;
-
+        visible: alwaysListView();
         model: currentGameList;
         delegate: lvGameDelegate;
-        width: (parent.width / 2) - 20; // 20 is left margin
+
+        width: parent.width * theme.gridViewScale - 20; // 20 is left margin
         height: parent.height - 24;
         highlightMoveDuration: 0;
         preferredHighlightBegin: itemHeight - 12; // height of an item minus top margin
@@ -175,27 +189,79 @@ Item {
 
     Component {
         id: lvGameDelegate;
-
         GameItem {
-            width: gamesListView.width;
+            width: gamesGridView.width;
             height: itemHeight;
         }
     }
 
+    GridView{
+        id: gamesGridView;
+        model: currentGameList;
+        visible: !alwaysListView();
+        
+        anchors.leftMargin: 60;
+        width: parent.width * theme.gridViewScale - 20; // 20 is left margin
+        height: parent.height - 80;
+
+        highlightRangeMode: GridView.StrictlyEnforceRange;
+        preferredHighlightBegin: 40 *  theme.gridViewScale;
+        preferredHighlightEnd: parent.height;
+
+        property real columnCount: {
+            if (cellHeightRatio > 1.2) return 5;
+            if (cellHeightRatio > 0.6) return 4;
+            return 3;
+        }
+        readonly property int maxRecalcs: 5
+        property int currentRecalcs: 0
+        property real cellHeightRatio: 0.5
+
+        cellWidth: width / columnCount
+        cellHeight: cellWidth * cellHeightRatio;
+        
+        delegate: Media.GameGridItem {
+            width: GridView.view.cellWidth;
+            height: GridView.view.cellHeight;
+            selected: GridView.isCurrentItem
+
+            game: modelData
+
+            onClicked: GridView.view.currentIndex = index
+            onDoubleClicked: {
+                GridView.view.currentIndex = index;
+                root.detailsRequested();
+            }
+            Keys.onPressed: {
+                if (api.keys.isAccept(event) && !event.isAutoRepeat) {
+                    root.launchRequested();
+                }
+            }
+
+            onImageLoaded: {
+                gamesGridView.columnCount = collectionData.getColumnCount(currentShortName);
+                gamesGridView.cellHeightRatio = collectionData.getRatio(currentShortName);
+                if(!settings.get('showDetail')){
+                    gamesGridView.columnCount += 1;
+                }
+            }
+        }
+    
+    }
+
     SkipLetter {
         id: skipLetter;
-
         anchors {
-            verticalCenter: gamesListView.verticalCenter;
-            horizontalCenter: gamesListView.horizontalCenter;
+            verticalCenter: gamesGridView.verticalCenter;
+            horizontalCenter: gamesGridView.horizontalCenter;
         }
     }
 
     /* Vertical pane with rating, players, date */
     VerticalPane {
         id: verticalPane;
-
-        width: vpx(40);
+        width: vpx(20);
+        visible:false;
         anchors {
             top: parent.top;
             topMargin: vpx(10);
@@ -206,35 +272,21 @@ Item {
         }
     }
 
+    // right side
     Rectangle {
         color: 'transparent';
-        width: parent.width / 2 - vpx(62);
+        width:  parent.width * 0.45 - vpx(62);
         height: parent.height;
-        x: parent.width / 2;
-
-
-        /*Rectangle {
-            height: parent.height - gameListBoxart.height * .95 - vpx(10);
-            anchors {
-                top: parent.top;
-                topMargin: vpx(20);
-                left: parent.left;
-                leftMargin: vpx(70);
-                right: parent.right;
-                rightMargin: vpx(10);
-            }
-            color: 'transparent'; border.color: 'magenta';
-        }*/
+        anchors.left: gamesGridView.right;
+        anchors.leftMargin: 10;
 
         Media.GameImage {
             id: gameListScreenshot;
-
-            height: parent.height - gameListBoxart.height * .95 - vpx(10);
+            height: parent.height / 2;
             anchors {
-                top: parent.top;
-                topMargin: vpx(20);
+                bottom: parent.bottom;
                 left: parent.left;
-                leftMargin: vpx(70);
+                leftMargin: vpx(20);
                 right: parent.right;
                 rightMargin: vpx(10);
             }
@@ -244,7 +296,7 @@ Item {
         Media.GameVideo {
             id: gameListVideo;
 
-            height: parent.height - gameListBoxart.height * .95 - vpx(10);
+            height: parent.height / 2;
             anchors {
                 top: parent.top;
                 topMargin: vpx(20);
@@ -261,91 +313,71 @@ Item {
             }
         }
 
-        /*Rectangle {
-            height: parent.height * .4;
-            width: parent.width * .4;
-            anchors {
-                left: parent.left;
-                leftMargin: vpx(50);
-                bottom: parent.bottom;
-                bottomMargin: vpx(20);
-            }
-            color: 'transparent'; border.color: 'magenta';
-        }*/
-
-        Media.GameImage {
-            id: gameListBoxart;
-
-            height: parent.height * .4;
-            width: parent.width * .4;
-            anchors {
-                left: parent.left;
-                leftMargin: vpx(50);
-                bottom: parent.bottom;
-                bottomMargin: vpx(20);
-            }
-            imageSource: imgBoxFront;
-            alignment: Image.AlignLeft;
-        }
-
         Rectangle {
             color: 'transparent';
+            height:parent.height / 2 - 50;
             anchors {
-                top: gameListScreenshot.bottom;
-                topMargin: vpx(20);
-                left: gameListBoxart.right;
-                leftMargin: vpx(20);
+                top: parent.top;
+                left: parent.left;
                 right: parent.right;
-                rightMargin: vpx(20);
-                bottom: parent.bottom;
-                bottomMargin: vpx(20);
+                bottom: gameScrollBottomText.top;
+                topMargin:vpx(10);
+                leftMargin:vpx(10);
+                rightMargin:vpx(10);
             }
-        Text {
-            id: genre;
-            text: genreText;
+            Text {
+                id: genre;
+                text: genreText;
 
-            color: theme.current.detailsColor;
-            opacity: .7;
-            elide: Text.ElideRight;
-            maximumLineCount: 2;
-            wrapMode: Text.WordWrap;
-            horizontalAlignment: Text.AlignHCenter;
+                color: theme.current.detailsColor;
+                opacity: .7;
+                elide: Text.ElideRight;
+                maximumLineCount: 2;
+                wrapMode: Text.WordWrap;
+                horizontalAlignment: Text.AlignHCenter;
 
-            font {
-                family: glyphs.name;
-                pixelSize: parent.height * .125 * theme.fontScale;
-                bold: true;
-            }
+                font {
+                    family: glyphs.name;
+                    pixelSize: parent.height * .125 * theme.fontScale;
+                    bold: true;
+                }
 
-            width: parent.width;
-            anchors {
-                bottom: lastPlayed.top;
-            }
-        }
-
-        Text {
-            id: lastPlayed;
-            text: lastPlayedText;
-
-            color: theme.current.detailsColor;
-            opacity: .5;
-            elide: Text.ElideRight;
-            maximumLineCount: 1;
-            horizontalAlignment: Text.AlignHCenter;
-
-            font {
-                family: glyphs.name;
-                pixelSize: parent.height * .11 * theme.fontScale;
-                bold: false;
+                width: parent.width;
+                anchors {
+                    bottom: lastPlayed.top;
+                }
             }
 
-            width: parent.width;
-            anchors {
-                bottom: parent.bottom;
-                bottomMargin: parent.height * .25;
+            Media.GameImage {
+                id: gameListLogo;
+                anchors {
+                    fill: parent;
+                }
+                imageSource: imgLogo;
             }
         }
-        }
 
+        Rectangle{
+            id: gameScrollBottomText;
+            width:parent.width-20;
+            color: 'transparent';
+            height:vpx(40);
+            anchors{
+                bottom:gameListScreenshot.top;
+                horizontalCenter:parent.horizontalCenter;
+            }
+            Text{
+                text: currentGame.developer + ' - ' +currentGame.releaseYear;
+                color:theme.current.blurTextColor;
+                font {
+                    pixelSize: parent.height * .5;
+                    letterSpacing: -0.3;
+                    bold: true;
+                }
+                anchors.horizontalCenter:parent.horizontalCenter;
+                anchors.verticalCenter:parent.verticalCenter;
+                wrapMode: Text.WordWrap;
+            }
+        }
     }
 }

@@ -61,36 +61,36 @@ Item {
        
         }
 
-        Text {
-            text: playersText;
+        // Text {
+        //     text: playersText;
 
-            color: theme.current.detailsColor;
-            opacity: 0.7;
-            //verticalAlignment: Text.AlignBottom;
-            //horizontalAlignment: Text.AlignHCenter;
+        //     color: theme.current.detailsColor;
+        //     opacity: 0.7;
+        //     //verticalAlignment: Text.AlignBottom;
+        //     //horizontalAlignment: Text.AlignHCenter;
 
-            font {
-                family: glyphs.name;
-                pixelSize: vertMain.height * .04 * theme.fontScale;
-                bold: true;
-            }
+        //     font {
+        //         family: glyphs.name;
+        //         pixelSize: vertMain.height * .04 * theme.fontScale;
+        //         bold: true;
+        //     }
             
-            //transform: Rotation { origin.x: 0; origin.y: 0; angle: 90 }
+        //     //transform: Rotation { origin.x: 0; origin.y: 0; angle: 90 }
 
-            //x: verticalPane.width  1;
-            //y: verticalPane.height * 0.55;
-            width: parent.width * .2;
-            anchors {
-                //left: verticalPane.right;
-                //leftMargin: -25;
-                //right: verticalPane.right;
-                //bottom: verticalPane.bottom;
-                verticalCenter: parent.verticalCenter;
-                horizontalCenter: parent.horizontalCenter;
+        //     //x: verticalPane.width  1;
+        //     //y: verticalPane.height * 0.55;
+        //     width: parent.width * .2;
+        //     anchors {
+        //         //left: verticalPane.right;
+        //         //leftMargin: -25;
+        //         //right: verticalPane.right;
+        //         //bottom: verticalPane.bottom;
+        //         verticalCenter: parent.verticalCenter;
+        //         horizontalCenter: parent.horizontalCenter;
 
-            }
+        //     }
         
-        }
+        // }
 
         Text {
             text: releaseDateText;

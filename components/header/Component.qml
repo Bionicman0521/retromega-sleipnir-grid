@@ -19,7 +19,7 @@ Rectangle {
     }
 
     color: 'transparent';
-    height: root.height * .115 * theme.fontScale;
+    height: root.height * .1 * theme.fontScale;
 
     anchors {
         left: parent.left;

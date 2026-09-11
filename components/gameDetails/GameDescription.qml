@@ -90,7 +90,7 @@ Item {
                 horizontalAlignment: Text.AlignJustify;
 
                 font {
-                    pixelSize: root.height * .03 * theme.fontScale;
+                    pixelSize: root.height * .035 * theme.fontScale;
                     letterSpacing: -0.35;
                     bold: false;
                 }

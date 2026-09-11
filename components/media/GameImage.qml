@@ -134,7 +134,8 @@ Item {
         source: boxartRounded;
         anchors.fill: boxartRounded;
         color: theme.current.dropShadowColor;
-        verticalOffset: 5;
+        verticalOffset: 10;
+        horizontalOffset:10;
         radius: 20;
         samples: 41;
         cached: false;

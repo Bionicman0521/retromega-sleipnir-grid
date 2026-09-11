@@ -27,50 +27,109 @@ Flickable {
     }
     boundsMovement: Flickable.StopAtBounds
     pressDelay: 0
+
+    function alwaysListView() {
+        return currentShortName=='allgames' || currentShortName=='favorites' || settings.get('alwaysListView');
+    }
     
     function updateIndex(newIndex, moveAnimation=false) {
-        if(moveAnimation)
+        if(alwaysListView()) {
+            if(moveAnimation)
             gameScroll.gamesListView.highlightMoveDuration = 225;
-        gameScroll.gamesListView.currentIndex = newIndex;
+            gameScroll.gamesListView.currentIndex = newIndex;
+            if(moveAnimation)
+                gameScroll.gamesListView.highlightMoveDuration = 0;
+        }
         if(moveAnimation)
-            gameScroll.gamesListView.highlightMoveDuration = 0;
+            gameScroll.gamesGridView.highlightMoveDuration = 225;
+        gameScroll.gamesGridView.currentIndex = newIndex;
+        if(moveAnimation)
+            gameScroll.gamesGridView.highlightMoveDuration = 0;   
+    }
+
+    Keys.onLeftPressed: {
+        event.accepted = true;
+        if(alwaysListView()){
+            event.accepted = true;
+            if (currentGameIndex === 0) return;
+
+            let newIndex = currentGameIndex - 1;
+            const oldGame = getMappedGame(newIndex);
+            const oldLetter = oldGame.sortBy[0].toLowerCase();
+
+            while (newIndex > 0) {
+                const newGame = getMappedGame(newIndex - 1);
+                const newLetter = newGame.sortBy[0].toLowerCase();
+                if (newLetter !== oldLetter) {
+                     break;
+                }
+                 newIndex--;
+            }
+
+            const updated = updateGameIndex(newIndex);
+            if (updated) {
+                gameScroll.letter = currentGame.title[0].toUpperCase();
+                sounds.nav();
+            }
+            return;
+        }
+        const updated = updateGameIndex(currentGameIndex - 1);
+        if (updated) { sounds.nav(); }
+    }
+
+    Keys.onRightPressed: {
+        event.accepted = true;
+        if(alwaysListView()){
+            event.accepted = true;
+            if (currentGameIndex === currentGameList.count - 1) return;
+            const oldLetter = currentGame.sortBy[0].toLowerCase();
+            let newIndex = currentGameIndex;
+
+            while (newIndex < currentGameList.count - 1) {
+                newIndex++;
+                const newGame = getMappedGame(newIndex);
+                const newLetter = newGame.sortBy[0].toLowerCase();
+                if (newLetter !== oldLetter) {
+                    break;
+                }
+            }
+
+            const updated = updateGameIndex(newIndex);
+            if (updated) {
+                gameScroll.letter = currentGame.title[0].toUpperCase();
+                sounds.nav();
+            }
+            return;
+        }
+        const updated = updateGameIndex(currentGameIndex + 1);
+        if (updated) { sounds.nav(); }
     }
 
     Keys.onUpPressed: {
         event.accepted = true;
-        const updated = updateGameIndex(currentGameIndex - 1);
+        if(alwaysListView()){
+            updateGameIndex(currentGameIndex - 1);
+            return;
+        }
+        let new_index = currentGameIndex - gameScroll.gamesGridView.columnCount
+        const updated = updateGameIndex(new_index>=0?new_index:currentGameIndex);
         if (updated) { sounds.nav(); }
     }
 
     Keys.onDownPressed: {
         event.accepted = true;
-        const updated = updateGameIndex(currentGameIndex + 1);
+        // if(currentShortName=='allgames' || currentShortName=='favorites'){
+        if(alwaysListView()){
+            updateGameIndex(currentGameIndex + 1);
+            return;
+        }
+        let new_index = currentGameIndex + gameScroll.gamesGridView.columnCount
+        const updated = updateGameIndex(new_index > (currentGameList.count-1) ? currentGameIndex: new_index);
         if (updated) { sounds.nav(); }
-    }
-
-    Keys.onLeftPressed: {
-        event.accepted = true;
-        const updated = updateCollectionIndex(currentCollectionIndex - 1);
-        if (updated) {
-            updateSortedCollection();
-            sounds.nav();
-            gameScroll.video.switchVideo();
-        }
-    }
-
-    Keys.onRightPressed: {
-        event.accepted = true;
-        const updated = updateCollectionIndex(currentCollectionIndex + 1);
-        if (updated) {
-            updateSortedCollection();
-            sounds.nav();
-            gameScroll.video.switchVideo();
-        }
     }
 
     function onAcceptPressed() {
         if (currentGameList.count === 0) return;
-
         sounds.launch();
         currentGame.launch();
     }
@@ -94,6 +153,21 @@ Flickable {
     }
 
     Keys.onPressed: {
+
+        if (api.keys.isPageUp(event) || api.keys.isPageDown(event)) {
+                event.accepted = true;
+                var rows_to_skip = Math.max(1, Math.round(gamesGridView.height / cellHeight));
+                var games_to_skip = rows_to_skip * columnCount;
+                if (api.keys.isPageUp(event)){
+                    let new_index = Math.max(currentGameIndex - games_to_skip, 0);
+                    const updated = updateGameIndex(new_index);
+                }
+                else{
+                    let  new_index = Math.min(currentGameIndex + games_to_skip, model.count - 1);
+                    const updated = updateGameIndex(new_index);
+                }
+            }
+
         if (api.keys.isCancel(event)) {
             event.accepted = true;
             onCancelPressed();
@@ -116,53 +190,22 @@ Flickable {
 
         // L1
         if (api.keys.isPrevPage(event)) {
-            event.accepted = true;
-            if (currentGameIndex === 0) return;
-
-            let newIndex = currentGameIndex - 1;
-            const oldGame = getMappedGame(newIndex);
-            const oldLetter = oldGame.sortBy[0].toLowerCase();
-
-            while (newIndex > 0) {
-                const newGame = getMappedGame(newIndex - 1);
-                const newLetter = newGame.sortBy[0].toLowerCase();
-
-                if (newLetter !== oldLetter) {
-                    break;
-                }
-
-                newIndex--;
-            }
-
-            const updated = updateGameIndex(newIndex);
+            const updated = updateCollectionIndex(currentCollectionIndex - 1);
             if (updated) {
-                gameScroll.letter = currentGame.title[0].toUpperCase();
+                updateSortedCollection();
                 sounds.nav();
+                gameScroll.video.switchVideo();
             }
         }
 
         // R1
         if (api.keys.isNextPage(event)) {
-            event.accepted = true;
-            if (currentGameIndex === currentGameList.count - 1) return;
-
-            const oldLetter = currentGame.sortBy[0].toLowerCase();
-            let newIndex = currentGameIndex;
-
-            while (newIndex < currentGameList.count - 1) {
-                newIndex++;
-                const newGame = getMappedGame(newIndex);
-                const newLetter = newGame.sortBy[0].toLowerCase();
-
-                if (newLetter !== oldLetter) {
-                    break;
-                }
-            }
-
-            const updated = updateGameIndex(newIndex);
+            
+            const updated = updateCollectionIndex(currentCollectionIndex + 1);
             if (updated) {
-                gameScroll.letter = currentGame.title[0].toUpperCase();
+                updateSortedCollection();
                 sounds.nav();
+                gameScroll.video.switchVideo();
             }
         }
     }
@@ -199,7 +242,6 @@ Flickable {
 
     GameScroll {
         id: gameScroll;
-
         letter: '';
 
         anchors {
@@ -207,6 +249,8 @@ Flickable {
             bottom: gameListFooter.top;
             left: parent.left;
             right: parent.right;
+            leftMargin: 20;
+            bottomMargin:20;
         }
     }
 
@@ -235,10 +279,10 @@ Flickable {
 
     Header.Component {
         id: gameListHeader;
-
         showDivider: true;
         shade: 'dark';
         color: theme.current.bgColor;
         showTitle: true;
+        z:0;
     }
 }

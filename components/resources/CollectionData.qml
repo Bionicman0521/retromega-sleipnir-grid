@@ -7,6 +7,18 @@ Item {
             ?? collectionData.metadata['default'].color;
     }
 
+    function getColumnCount(shortName){
+        const alias = getAlias(shortName);
+        return collectionData.gridData[alias].columnCount
+            ?? collectionData.metadata['default'].columnCount;
+    }
+
+    function getRatio(shortName){
+        const alias = getAlias(shortName);
+        return collectionData.gridData[alias].ratio
+            ?? collectionData.metadata['default'].ratio;
+    }
+
     function getVendorYear(shortName) {
         const alias = getAlias(shortName);
         const vendor = collectionData.metadata[alias].vendor ?? '';
@@ -131,13 +143,32 @@ Item {
         'sinclair zx spectrum': 'zxspectrum',
     }
 
+    property var gridData:{
+        'default':{columnCount: 5, ratio: 1.3},
+        'dos':{columnCount: 5, ratio: 1.3},
+        'gba':{columnCount: 4, ratio: 1},
+        'gamecube':{columnCount: 5, ratio: 1.35},
+        '3ds':{columnCount: 4, ratio: 0.9},
+        'n64':{columnCount: 4, ratio: 0.7},
+        'nds':{columnCount: 4, ratio: 0.9},
+        'wii':{columnCount: 5, ratio: 1.35},
+        'switch':{columnCount: 5, ratio: 1.55},
+        'psx':{columnCount: 4, ratio: 0.95},
+        'ps2':{columnCount: 5, ratio: 1.37},
+        'psp':{columnCount: 5, ratio: 1.64},
+        'dreamcast':{columnCount: 4, ratio: 1},
+        'snes':{columnCount: 4, ratio: 0.75},
+        'pc':{columnCount: 5, ratio: 1.37},
+    }
+
     property var metadata: {
-        '3do': { color: '#afdb69', vendor: 'The 3DO Company', year: '1993-1996' },
-        '3ds': { color: '#73bc9e', vendor: 'Nintendo', year: '2011-2020' },
-        'allgames': { color: '#292463' },
+        '3do': { color: '#a51cd4', vendor: 'The 3DO Company', year: '1993-1996' },
+        '3ds': { color: '#1c48d4', vendor: 'Nintendo', year: '2011-2020' },
+        'allgames': { color: '#c3b600' },
         'amiga': { color: '#724755', vendor: 'Commodore', year: '1985-1996' },
-        'android': { color: '#266f4f' },
+        'android': { color: '#7dc947', vendor:'Google', year:'2008'},
         'arcade': { color: '#528821' },
+        'pc': { color: '#9b1d1d', vendor: 'Microsoft',year:'1985' },
         'atari2600': { color: '#4f7524', vendor: 'Atari', year: '1977-1992' },
         'atari5200': { color: '#0685bb', vendor: 'Atari', year: '1982-1984' },
         'atari7800': { color: '#1d4b4c', vendor: 'Atari', year: '1986-1992' },
@@ -151,16 +182,16 @@ Item {
         'cps2': { color: '#049728', vendor: 'Capcom', year: '1993-2003', image: 'arcade' },
         'cps3': { color: '#258ed1', vendor: 'Capcom', year: '1996-1999', image: 'arcade' },
         'default': { color: '#194492' },
-        'dos': { color: '#87151b', vendor: 'Microsoft', year: '1981-2000' },
-        'dreamcast': { color: '#2387ff', vendor: 'Sega', year: '1998-2001' },
+        'dos': { color: '#571272', vendor: 'Microsoft', year: '1981-2000' },
+        'dreamcast': { color: '#1ba77b', vendor: 'Sega', year: '1998-2001' },
         'famicom': { color: '#0a866f', vendor: 'Nintendo', year: '1983-2003', image: 'nes' },
-        'favorites': { color: '#b75057' },
+        'favorites': { color: '#c0bc51' },
         'fbneo': { color: '#3b2dd4', image: 'arcade' },
         'fds': { color: '#191a49', vendor: 'Nintendo', year: '1986-1990', image: 'nes' },
-        'gamecube': { color: '#4b0082', vendor: 'Nintendo', year: '2001-2007' },
+        'gamecube': { color: '#F2DB11', vendor: 'Nintendo', year: '2001-2007' },
         'gamegear': { color: '#d0970d', vendor: 'Sega', year: '1990-1997' },
         'gb': { color: '#9f75b0', vendor: 'Nintendo', year: '1989-2003' },
-        'gba': { color: '#342692', vendor: 'Nintendo', year: '2001-2008' },
+        'gba': { color: '#4933DE', vendor: 'Nintendo', year: '2001-2008' },
         'gbc': { color: '#7b4ccc', vendor: 'Nintendo', year: '1998-2003' },
         'genesis': { color: '#df535b', vendor: 'Sega', year: '1988-1997' },
         'gw': { color: '#6f3e80', vendor: 'Nintendo', year: '1980-1991' },
@@ -169,9 +200,9 @@ Item {
         'mastersystem': { color: '#2f34c2', vendor: 'Sega', year: '1985-1996' },
         'msx': { color: '#ef3208', vendor: 'Microsoft', year: '1983-1993' },
         'mvs': { color: '#851d01', vendor: 'SNK', year: '1990-1997', image: 'arcade' },
-        'n64': { color: '#807c68', vendor: 'Nintendo', year: '1996-2002' },
+        'n64': { color: '#d47e1c', vendor: 'Nintendo', year: '1996-2002' },
         'naomi': { color: '#843c8a', vendor: 'Sega', year: '1998-2001', image: 'arcade' },
-        'nds': { color: '#d09826', vendor: 'Nintendo', year: '2004-2013' },
+        'nds': { color: '#26b0d6', vendor: 'Nintendo', year: '2004-2013' },
         'neogeo': { color: '#1499de', vendor: 'SNK', year: '1990-2004' },
         'neogeocd': { color: '#9e5c27', vendor: 'SNK', year: '1994-1997' },
         'nes': { color: '#c85173', vendor: 'Nintendo', year: '1983-2003' },
@@ -183,9 +214,10 @@ Item {
         'pico8': { color: '#1c542d', vendor: 'Lexaloffle', year: '2015' },
         'pokemini': { color: '#19b091', vendor: 'Nintendo', year: '2001-2002' },
         'ports': { color: '#1d334a' },
-        'ps2': { color: '#347867', vendor: 'Sony', year: '2000-2013' },
+        'ps2': { color: '#bb0000', vendor: 'Sony', year: '2000-2013' },
         'psp': { color: '#4e0b9c', vendor: 'Sony', year: '2004-2014' },
-        'psx': { color: '#365f8d', vendor: 'Sony', year: '1994-2006' },
+        'psx': { color: '#0000a8', vendor: 'Sony', year: '1994-2006' },
+        'psv': { color: '#194492', vendor: 'Sony', year: '2011-2019' },
         'recents': { color: '#906226', vendor: 'past 30 days' },
         'saturn': { color: '#5b92ff', vendor: 'Sega', year: '1994-2000' },
         'scummvm': { color: '#5bce20', vendor: 'Lucasfilm Games', year: '1987-1998' },
@@ -193,13 +225,14 @@ Item {
         'segacd': { color: '#cc4545', vendor: 'Sega', year: '1991-1996' },
         'sfc': { color: '#766f81', vendor: 'Nintendo', year: '1990-2003', image: 'snes' },
         'sg1000': { color: '#0c8427', vendor: 'Sega', year: '1983-1985' },
-        'snes': { color: '#aa6aff', vendor: 'Nintendo', year: '1990-2003' },
+        'snes': { color: '#a31877', vendor: 'Nintendo', year: '1990-2003' },
         'supergrafx': { color: '#a66637', vendor: 'NEC', year: '1989-1990' },
+        'switch': { color: '#d3e83636', vendor: 'Nintendo', year: '2017' },
         'tg16': { color: '#585f21', vendor: 'NEC', year: '1987-1994', image: 'pcengine' },
         'tgcd': { color: '#340f7a', vendor: 'NEC', year: '1988-1994', image: 'pcengine' },
         'vboy': { color: '#802325', vendor: 'Nintendo', year: '1995-1996' },
         'vectrex': { color: '#8129f1', vendor: 'Milton Bradley', year: '1982-1984' },
-        'wii': { color: '#e0e027', vendor: 'Nintendo', year: '2006-2017' },
+        'wii': { color: '#2b9abf', vendor: 'Nintendo', year: '2006-2017' },
         'wswan': { color: '#d38aba', vendor: 'Bandai', year: '1999-2003' },
         'wswanc': { color: '#9b3f23', vendor: 'Bandai', year: '1999-2003', image: 'wswan' },
         'x68000': { color: '#a53180', vendor: 'Sharp', year: '1987-1993' },

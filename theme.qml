@@ -14,7 +14,7 @@ import 'components/gameCheevos' as GameCheevos
 
 FocusScope {
     id: root;
-
+    property bool isGrid: true;
     property bool debugRA: false;
 
     property string currentView: 'collectionList';

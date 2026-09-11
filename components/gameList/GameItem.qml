@@ -11,7 +11,7 @@ Item {
         anchors.fill: parent;
 
         onClicked: {
-            if (gamesListView.currentIndex === index) {
+            if (gamesGridView.currentIndex === index) {
                 onAcceptPressed();
             } else {
                 const updated = updateGameIndex(index);
@@ -20,7 +20,7 @@ Item {
         }
 
         onPressAndHold: {
-            if (gamesListView.currentIndex === index) {
+            if (gamesGridView.currentIndex === index) {
                 onDetailsPressed();
             } else {
                 const updated = updateGameIndex(index);
@@ -31,21 +31,18 @@ Item {
 
     Text {
         id: gameTitle;
-
         text: title;
         verticalAlignment: Text.AlignVCenter;
         elide: Text.ElideRight;
-        color: gamesListView.currentIndex === index
+        color: gamesGridView.currentIndex === index
             ? theme.current.focusTextColor
             : theme.current.blurTextColor;
         height: parent.height;
-
         font {
-            pixelSize: parent.height * .43;
+            pixelSize: parent.height * .45;
             letterSpacing: -0.3;
             bold: true;
         }
-
         anchors {
             left: parent.left;
             leftMargin: 12;
@@ -58,7 +55,7 @@ Item {
         visible: showFavorite;
         text: glyphs.favorite;
         verticalAlignment: Text.AlignVCenter;
-        color: gamesListView.currentIndex === index
+        color: gamesGridView.currentIndex === index
             ? theme.current.focusTextColor
             : theme.current.blurTextColor;
         height: parent.height;

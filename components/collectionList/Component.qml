@@ -125,9 +125,10 @@ Item {
             if (sigValue === 'attract') onAttractPressed();
         }
     }
-
+    
     Header.Component {
         showDivider: false;
         shade: 'light';
     }
+    
 }

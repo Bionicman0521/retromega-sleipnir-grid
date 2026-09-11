@@ -1,5 +1,5 @@
 import QtQuick 2.15
-
+import '../gameList' as Gs
 Item {
     property int collectionCount: allCollections.length;
     property alias collectionListView: collectionListView;
@@ -67,7 +67,6 @@ Item {
                 const updated = updateCollectionIndex(currentIndex, true);
                 if (updated && !muteStartup) sounds.nav();
             }
-
             backgroundColor.color = collectionData.getColor(currentShortName);
         }
     }
