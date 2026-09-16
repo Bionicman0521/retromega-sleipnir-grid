@@ -145,7 +145,7 @@ Item {
 
     property var gridData:{
         'default':{columnCount: 5, ratio: 1.3},
-        'dos':{columnCount: 5, ratio: 1.3},
+        'dos':{columnCount: 5, ratio: 1.5},
         'gba':{columnCount: 4, ratio: 1},
         'gamecube':{columnCount: 5, ratio: 1.35},
         '3ds':{columnCount: 4, ratio: 0.9},
@@ -158,7 +158,7 @@ Item {
         'psp':{columnCount: 5, ratio: 1.64},
         'dreamcast':{columnCount: 4, ratio: 1},
         'snes':{columnCount: 4, ratio: 0.75},
-        'pc':{columnCount: 5, ratio: 1.37},
+        'pc':{columnCount: 5, ratio: 1.5},
     }
 
     property var metadata: {
